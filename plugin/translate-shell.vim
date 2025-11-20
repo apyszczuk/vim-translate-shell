@@ -158,7 +158,7 @@ function! s:echo(translation)
     echo join(a:translation, "\n")
 endfunction
 
-function! s:file(translation, configuration)
+function! s:window(translation, configuration)
     execute ":" a:configuration.window_split_direction . " new " . tempname()
     call append(0, a:translation)
     :write
@@ -169,7 +169,7 @@ endfunction
 
 
 
-nnoremap <silent> <Plug>(translate-shell-word-echo)
+nnoremap <silent> <Plug>(translate-shell-word-brief-echo)
 \   :call <SID>echo
 \   (
 \       <SID>translate
@@ -182,22 +182,7 @@ nnoremap <silent> <Plug>(translate-shell-word-echo)
 \   )
 \   <CR>
 
-xnoremap <silent> <Plug>(translate-shell-selection-file)
-\   :<C-U>
-\   call <SID>file
-\   (
-\       <SID>translate
-\       (
-\           <SID>get_selection(),
-\           g:translate_shell_language,
-\           g:translate_shell_options_brief,
-\           g:translate_shell_configuration
-\       ),
-\       g:translate_shell_configuration
-\   )
-\   <CR>
-
-xnoremap <silent> <Plug>(translate-shell-selection-echo)
+xnoremap <silent> <Plug>(translate-shell-selection-brief-echo)
 \   :<C-U>
 \   call <SID>echo
 \   (
@@ -211,9 +196,24 @@ xnoremap <silent> <Plug>(translate-shell-selection-echo)
 \   )
 \   <CR>
 
+xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
+\   :<C-U>
+\   call <SID>window
+\   (
+\       <SID>translate
+\       (
+\           <SID>get_selection(),
+\           g:translate_shell_language,
+\           g:translate_shell_options_brief,
+\           g:translate_shell_configuration
+\       ),
+\       g:translate_shell_configuration
+\   )
+\   <CR>
+
 
 if g:translate_shell_mappings_enabled == 1
-    nnoremap <C-L><C-T>             <Plug>(translate-shell-word-echo)
-    xnoremap <C-L><C-T>             <Plug>(translate-shell-selection-echo)
-    xnoremap <C-L><C-W><C-T>        <Plug>(translate-shell-selection-file)
+    nnoremap <C-L><C-T>         <Plug>(translate-shell-word-brief-echo)
+    xnoremap <C-L><C-T>         <Plug>(translate-shell-selection-brief-echo)
+    xnoremap <C-L><C-W><C-T>    <Plug>(translate-shell-selection-brief-window)
 endif
