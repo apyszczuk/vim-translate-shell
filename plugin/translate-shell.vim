@@ -14,7 +14,12 @@ let g:loaded_translate_shell = 1
 let g:translate_shell_mappings_enabled      = 1
 let s:translate_shell_binary                = "trans"
 
-let g:translate_shell_options_brief =
+let g:translate_shell_verbose =
+\ {
+\     "--no-ansi"                           : ""
+\ }
+
+let g:translate_shell_brief =
 \ {
 \     "-brief"                              : ""
 \   , "--no-ansi"                           : ""
@@ -176,7 +181,7 @@ nnoremap <silent> <Plug>(translate-shell-word-brief-echo)
 \       (
 \           "<C-R>=expand("<cword>")<CR>",
 \           g:translate_shell_language,
-\           g:translate_shell_options_brief,
+\           g:translate_shell_brief,
 \           g:translate_shell_configuration
 \       )
 \   )
@@ -190,7 +195,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-echo)
 \       (
 \           <SID>get_selection(),
 \           g:translate_shell_language,
-\           g:translate_shell_options_brief,
+\           g:translate_shell_brief,
 \           g:translate_shell_configuration
 \       )
 \   )
@@ -204,7 +209,50 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 \       (
 \           <SID>get_selection(),
 \           g:translate_shell_language,
-\           g:translate_shell_options_brief,
+\           g:translate_shell_brief,
+\           g:translate_shell_configuration
+\       ),
+\       g:translate_shell_configuration
+\   )
+\   <CR>
+
+
+nnoremap <silent> <Plug>(translate-shell-word-verbose-echo)
+\   :call <SID>echo
+\   (
+\       <SID>translate
+\       (
+\           "<C-R>=expand("<cword>")<CR>",
+\           g:translate_shell_language,
+\           g:translate_shell_verbose,
+\           g:translate_shell_configuration
+\       )
+\   )
+\   <CR>
+
+xnoremap <silent> <Plug>(translate-shell-selection-verbose-echo)
+\   :<C-U>
+\   call <SID>echo
+\   (
+\       <SID>translate
+\       (
+\           <SID>get_selection(),
+\           g:translate_shell_language,
+\           g:translate_shell_verbose,
+\           g:translate_shell_configuration
+\       )
+\   )
+\   <CR>
+
+xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
+\   :<C-U>
+\   call <SID>window
+\   (
+\       <SID>translate
+\       (
+\           <SID>get_selection(),
+\           g:translate_shell_language,
+\           g:translate_shell_verbose,
 \           g:translate_shell_configuration
 \       ),
 \       g:translate_shell_configuration
@@ -213,7 +261,11 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 
 
 if g:translate_shell_mappings_enabled == 1
-    nnoremap <C-L><C-T>         <Plug>(translate-shell-word-brief-echo)
-    xnoremap <C-L><C-T>         <Plug>(translate-shell-selection-brief-echo)
-    xnoremap <C-L><C-W><C-T>    <Plug>(translate-shell-selection-brief-window)
+    nnoremap mtw        <Plug>(translate-shell-word-brief-echo)
+    xnoremap mtw        <Plug>(translate-shell-selection-brief-echo)
+    xnoremap mtW        <Plug>(translate-shell-selection-brief-window)
+
+    nnoremap mtv        <Plug>(translate-shell-word-verbose-echo)
+    xnoremap mtv        <Plug>(translate-shell-selection-verbose-echo)
+    xnoremap mtV        <Plug>(translate-shell-selection-verbose-window)
 endif
