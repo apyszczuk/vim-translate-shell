@@ -10,28 +10,11 @@ endif
 let g:loaded_translate_shell = 1
 
 
-
 let g:translate_shell_mappings_enabled      = 1
 let s:translate_shell_binary                = "trans"
+let g:translate_shell_language              = ":pl"
 
-let g:translate_shell_verbose =
-\ {
-\     "--no-ansi"                           : ""
-\ }
-
-let g:translate_shell_brief =
-\ {
-\     "-brief"                              : ""
-\   , "--no-ansi"                           : ""
-\ }
-
-let g:translate_shell_language =
-\ {
-\     "source"                              : ""
-\   , "target"                              : "pl"
-\ }
-
-let g:translate_shell_configuration =
+let g:translate_shell_mapping_configuration =
 \ {
 \     "group_paragraphs"                    : 1
 \   , "min_width_for_reformat"              : 40
@@ -106,33 +89,21 @@ function! s:single_line_paragraphs(source)
     return ret
 endfunction
 
-function! s:translate(content, language, options, configuration)
+function! s:translate_mapping(configuration, content, ...)
     let content_list    = split(a:content, "\n")
     let paragraphs      = a:configuration.group_paragraphs ?
     \                     s:single_line_paragraphs(content_list) :
     \                     content_list
     let max_width       = s:max_width(content_list)
-    " echo "max_width = " . max_width
+
+    let command = s:translate_shell_binary . " --no-ansi"
 
 
-    let command = s:translate_shell_binary
-
-    " languages
-    let command .= " " . a:language.source . ":" . a:language.target
-
-
-    " flags / options-values
-    for option_key in keys(a:options)
-        let option_value = a:options[option_key]
-
-        let command .= " " . option_key
-        if len(option_value) > 0
-            let command .= " " . option_value
-        endif
+    for arg in a:000
+        let command .= " " . arg
     endfor
 
 
-    " content
     let content_string = ""
     for paragraph in paragraphs
         let content_string .= paragraph . "\n"
@@ -144,17 +115,10 @@ function! s:translate(content, language, options, configuration)
     let command .= " " . '"' . content_string . '"'
 
 
-    " echo command
-    " formatter
-    " conditional because source text can be very short
-    " and translation can be longer, which can wrap to
-    " two or more lines, which is a little bit weird.
     if max_width > a:configuration.min_width_for_reformat
         let command .= " | fmt -w " . max_width
     endif
 
-
-    " execute command
     return systemlist(command)
 endfunction
 
@@ -177,12 +141,12 @@ endfunction
 nnoremap <silent> <Plug>(translate-shell-word-brief-echo)
 \   :call <SID>echo
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           "<C-R>=expand("<cword>")<CR>",
-\           g:translate_shell_language,
-\           g:translate_shell_brief,
-\           g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , "<C-R>=expand("<cword>")<CR>"
+\           , g:translate_shell_language
+\           , "--brief"
 \       )
 \   )
 \   <CR>
@@ -191,12 +155,12 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-echo)
 \   :<C-U>
 \   call <SID>echo
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           <SID>get_selection(),
-\           g:translate_shell_language,
-\           g:translate_shell_brief,
-\           g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , <SID>get_selection()
+\           , g:translate_shell_language
+\           , "--brief"
 \       )
 \   )
 \   <CR>
@@ -205,14 +169,14 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 \   :<C-U>
 \   call <SID>window
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           <SID>get_selection(),
-\           g:translate_shell_language,
-\           g:translate_shell_brief,
-\           g:translate_shell_configuration
-\       ),
-\       g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , <SID>get_selection()
+\           , g:translate_shell_language
+\           , "--brief"
+\       )
+\       , g:translate_shell_mapping_configuration
 \   )
 \   <CR>
 
@@ -220,12 +184,12 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 nnoremap <silent> <Plug>(translate-shell-word-verbose-echo)
 \   :call <SID>echo
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           "<C-R>=expand("<cword>")<CR>",
-\           g:translate_shell_language,
-\           g:translate_shell_verbose,
-\           g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , "<C-R>=expand("<cword>")<CR>"
+\           , g:translate_shell_language
+\           , "--verbose"
 \       )
 \   )
 \   <CR>
@@ -234,12 +198,12 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-echo)
 \   :<C-U>
 \   call <SID>echo
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           <SID>get_selection(),
-\           g:translate_shell_language,
-\           g:translate_shell_verbose,
-\           g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , <SID>get_selection()
+\           , g:translate_shell_language
+\           , "--verbose"
 \       )
 \   )
 \   <CR>
@@ -248,14 +212,14 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
 \   :<C-U>
 \   call <SID>window
 \   (
-\       <SID>translate
+\       <SID>translate_mapping
 \       (
-\           <SID>get_selection(),
-\           g:translate_shell_language,
-\           g:translate_shell_verbose,
-\           g:translate_shell_configuration
+\             g:translate_shell_mapping_configuration
+\           , <SID>get_selection()
+\           , g:translate_shell_language
+\           , "--verbose"
 \       ),
-\       g:translate_shell_configuration
+\       g:translate_shell_mapping_configuration
 \   )
 \   <CR>
 
