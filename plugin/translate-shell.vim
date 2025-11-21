@@ -21,10 +21,6 @@ let g:translate_shell_mapping_configuration =
 \   , "window_split_direction"              : "vertical" 
 \ }
 
-
-
-
-
 function! s:get_selection()
     let tmp = @a
 
@@ -127,8 +123,8 @@ function! s:echo(translation)
     echo join(a:translation, "\n")
 endfunction
 
-function! s:window(translation, configuration)
-    execute ":" a:configuration.window_split_direction . " new " . tempname()
+function! s:window(translation, mode)
+    execute ":" a:mode . " new " . tempname()
     call append(0, a:translation)
     :write
 
@@ -176,7 +172,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 \           , g:translate_shell_language
 \           , "--brief"
 \       )
-\       , g:translate_shell_mapping_configuration
+\       , g:translate_shell_mapping_configuration.window_split_direction
 \   )
 \   <CR>
 
@@ -219,7 +215,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
 \           , g:translate_shell_language
 \           , "--verbose"
 \       ),
-\       g:translate_shell_mapping_configuration
+\       g:translate_shell_mapping_configuration.window_split_direction
 \   )
 \   <CR>
 
@@ -233,3 +229,32 @@ if g:translate_shell_mappings_enabled == 1
     xnoremap mtv        <Plug>(translate-shell-selection-verbose-echo)
     xnoremap mtV        <Plug>(translate-shell-selection-verbose-window)
 endif
+
+
+
+function! s:translate_command(args)
+    let command = s:translate_shell_binary . " --no-ansi"
+
+    for arg in a:args
+        let command .= " " . arg
+    endfor
+
+    return systemlist(command)
+endfunction
+
+function! s:translate_command_dispatch(bang, mods, ...)
+    if a:bang == "!"
+        let mode = "horizontal"
+
+        if (a:mods == "vertical") || (a:mods == "tab")
+            let mode = a:mods
+        endif
+
+        :call <SID>window(<SID>translate_command(a:000), mode)
+    else
+        :call <SID>echo(<SID>translate_command(a:000))
+    endif
+endfunction
+
+command! -nargs=+ -bang TS
+\ :call <SID>translate_command_dispatch("<bang>", "<mods>", <f-args>)
