@@ -14,6 +14,7 @@ let g:loaded_translate_shell = 1
 let g:translate_shell_mappings_enabled      = 1
 let s:translate_shell_binary                = "trans"
 let g:translate_shell_language              = ":"
+let g:translate_shell_engine                = "auto"
 
 let g:translate_shell_mapping_configuration =
 \ {
@@ -108,7 +109,9 @@ function! s:translate_mapping(configuration, content, ...)
     \                     content_list
     let max_width       = s:max_width(content_list)
 
-    let command = s:translate_shell_binary . " --no-ansi"
+    let command = s:translate_shell_binary
+    \           . " --no-ansi"
+    \           . " -e " . g:translate_shell_engine
 
 
     for arg in a:000
