@@ -18,9 +18,9 @@ let g:translate_shell_engine                = "auto"
 let g:translate_shell_mappings_enabled      = 1
 let g:translate_shell_mapping_configuration =
 \ {
-\     "group_paragraphs"                    : 1
+\     "paragraph_to_line"                   : 1
 \   , "min_width_for_reformat"              : 40
-\   , "window_split_direction"              : "vertical" 
+\   , "window_position"                     : "vertical" 
 \ }
 
 
@@ -104,7 +104,7 @@ endfunction
 
 function! s:translate_mapping(configuration, content, ...)
     let content_list    = split(a:content, "\n")
-    let paragraphs      = a:configuration.group_paragraphs ?
+    let paragraphs      = a:configuration.paragraph_to_line ?
     \                     s:single_line_paragraphs(content_list) :
     \                     content_list
     let max_width       = s:max_width(content_list)
@@ -176,7 +176,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 \           , g:translate_shell_language
 \           , "--brief"
 \       )
-\       , g:translate_shell_mapping_configuration.window_split_direction
+\       , g:translate_shell_mapping_configuration.window_position
 \   )
 \   <CR>
 
@@ -219,7 +219,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
 \           , g:translate_shell_language
 \           , "--verbose"
 \       ),
-\       g:translate_shell_mapping_configuration.window_split_direction
+\       g:translate_shell_mapping_configuration.window_position
 \   )
 \   <CR>
 
