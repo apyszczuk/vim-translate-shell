@@ -10,6 +10,7 @@ endif
 let g:loaded_translate_shell = 1
 
 
+" ---------------------------------------------------------- configuration -----
 let g:translate_shell_mappings_enabled      = 1
 let s:translate_shell_binary                = "trans"
 let g:translate_shell_language              = ":pl"
@@ -21,7 +22,25 @@ let g:translate_shell_mapping_configuration =
 \   , "window_split_direction"              : "vertical" 
 \ }
 
-function! s:get_selection()
+
+" ---------------------------------------------------------------- writers -----
+function! s:echo(translation)
+    echo join(a:translation, "\n")
+endfunction
+
+
+function! s:window(translation, mode)
+    execute ":" a:mode . " new " . tempname()
+    call append(0, a:translation)
+    :write
+
+    setlocal bufhidden=delete
+    setlocal nomodifiable
+endfunction
+
+
+" --------------------------------------------------------------- mappings -----
+function! s:selected_text()
     let tmp = @a
 
     :silent normal! gv"ay
@@ -31,15 +50,13 @@ function! s:get_selection()
     return ret
 endfunction
 
+
 function! s:max_width(lst)
     let i   = 0
     let ret = 0
 
-    " echo "len(lst) = " . len(a:lst)
-
     while i < len(a:lst)
         let sz = len(a:lst[i])
-        " echo sz
 
         if sz > ret
             let ret = sz
@@ -51,13 +68,11 @@ function! s:max_width(lst)
     return ret
 endfunction
 
+
 function! s:single_line_paragraphs(source)
     let ret         = []
     let paragraph   = ""
     let i           = 0
-
-    " echo "source"
-    " echo a:source
 
     while i < len(a:source)
         if len(a:source[i]) > 0
@@ -84,6 +99,7 @@ function! s:single_line_paragraphs(source)
 
     return ret
 endfunction
+
 
 function! s:translate_mapping(configuration, content, ...)
     let content_list    = split(a:content, "\n")
@@ -119,21 +135,6 @@ function! s:translate_mapping(configuration, content, ...)
 endfunction
 
 
-function! s:echo(translation)
-    echo join(a:translation, "\n")
-endfunction
-
-function! s:window(translation, mode)
-    execute ":" a:mode . " new " . tempname()
-    call append(0, a:translation)
-    :write
-
-    setlocal bufhidden=delete
-    setlocal nomodifiable
-endfunction
-
-
-
 nnoremap <silent> <Plug>(translate-shell-word-brief-echo)
 \   :call <SID>echo
 \   (
@@ -154,7 +155,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-echo)
 \       <SID>translate_mapping
 \       (
 \             g:translate_shell_mapping_configuration
-\           , <SID>get_selection()
+\           , <SID>selected_text()
 \           , g:translate_shell_language
 \           , "--brief"
 \       )
@@ -168,7 +169,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-brief-window)
 \       <SID>translate_mapping
 \       (
 \             g:translate_shell_mapping_configuration
-\           , <SID>get_selection()
+\           , <SID>selected_text()
 \           , g:translate_shell_language
 \           , "--brief"
 \       )
@@ -197,7 +198,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-echo)
 \       <SID>translate_mapping
 \       (
 \             g:translate_shell_mapping_configuration
-\           , <SID>get_selection()
+\           , <SID>selected_text()
 \           , g:translate_shell_language
 \           , "--verbose"
 \       )
@@ -211,7 +212,7 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
 \       <SID>translate_mapping
 \       (
 \             g:translate_shell_mapping_configuration
-\           , <SID>get_selection()
+\           , <SID>selected_text()
 \           , g:translate_shell_language
 \           , "--verbose"
 \       ),
@@ -231,7 +232,7 @@ if g:translate_shell_mappings_enabled == 1
 endif
 
 
-
+" --------------------------------------------------------------- commands -----
 function! s:translate_command(args)
     let command = s:translate_shell_binary . " --no-ansi"
 
@@ -241,6 +242,7 @@ function! s:translate_command(args)
 
     return systemlist(command)
 endfunction
+
 
 function! s:translate_command_dispatch(bang, mods, ...)
     if a:bang == "!"
@@ -255,6 +257,7 @@ function! s:translate_command_dispatch(bang, mods, ...)
         :call <SID>echo(<SID>translate_command(a:000))
     endif
 endfunction
+
 
 command! -nargs=+ -bang TS
 \ :call <SID>translate_command_dispatch("<bang>", "<mods>", <f-args>)
