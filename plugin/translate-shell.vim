@@ -13,7 +13,7 @@ let g:loaded_translate_shell = 1
 " ---------------------------------------------------------- configuration -----
 let g:translate_shell_mappings_enabled      = 1
 let s:translate_shell_binary                = "trans"
-let g:translate_shell_language              = ":pl"
+let g:translate_shell_language              = ":"
 
 let g:translate_shell_mapping_configuration =
 \ {
