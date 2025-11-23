@@ -1,0 +1,236 @@
+*translate-shell.txt*   Translate Shell                      *translate-shell*
+
+████████╗██████╗  █████╗ ███╗   ██╗███████╗██╗      █████╗ ████████╗███████╗
+╚══██╔══╝██╔══██╗██╔══██╗████╗  ██║██╔════╝██║     ██╔══██╗╚══██╔══╝██╔════╝
+   ██║   ██████╔╝███████║██╔██╗ ██║███████╗██║     ███████║   ██║   █████╗  
+   ██║   ██╔══██╗██╔══██║██║╚██╗██║╚════██║██║     ██╔══██║   ██║   ██╔══╝  
+   ██║   ██║  ██║██║  ██║██║ ╚████║███████║███████╗██║  ██║   ██║   ███████╗
+   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
+
+                   ███████╗██╗  ██╗███████╗██╗     ██╗     
+                   ██╔════╝██║  ██║██╔════╝██║     ██║     
+                   ███████╗███████║█████╗  ██║     ██║     
+                   ╚════██║██╔══██║██╔══╝  ██║     ██║     
+                   ███████║██║  ██║███████╗███████╗███████╗
+                   ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
+
+Author:     Artur Pyszczuk <apyszczuk@gmail.com>
+License:    Same terms as Vim itself (see |license|)
+Website:    https://github.com/apyszczuk/vim-translate-shell
+
+==============================================================================
+TABLE OF CONTENTS
+==============================================================================
+
+INTRODUCTION                                    |translate-shell:introduction|
+DEPENDENCIES                                    |translate-shell:dependencies|
+CONFIGURATION                                  |translate-shell:configuration|
+COMMANDS                                            |translate-shell:commands|
+MAPPINGS                                            |translate-shell:mappings|
+CONTRIBUTE                                        |translate-shell:contribute|
+
+==============================================================================
+INTRODUCTION                                    *translate-shell:introduction*
+==============================================================================
+
+Have you ever wanted to translate a word, sentence, paragraph, selection or
+even whole file without beeing forced to copy - switch to browser - paste and
+potentionally copy result and paste it back to the Vim? I bet so. Task is even
+more annoying if your Vim distribution is not compiled with |+clipboard|
+feature (you can not copy text from Vim and paste it in other application
+using Vim commands).
+
+So here we are, `vim-translate-shell` tries to make your life easier. This
+plugin does not do the translation on its own, it is simple wrapper for
+`translate-shell` application (https://github.com/soimort/translate-shell)
+that does whole job of sending text to be translated to one of available
+engines, getting response and presenting it to you. The application is
+designed to be used in a terminal (command line interface), so before using
+this plugin I recommend you to give it a try and see what you can achieve.
+
+You can use this plugin by using:
+
+- commands (|translate-shell:commands|)
+- mappings (|translate-shell:mappings|)
+
+In both cases you can print results using |echo| if you don't care too much
+about translation after reading it or you can get translation written to a
+temporary file and shown in a new window.
+
+==============================================================================
+DEPENDENCIES                                    *translate-shell:dependencies*
+==============================================================================
+
+- `translate-shell` - application for sending and receiving data from
+  translation engine (https://github.com/soimort/translate-shell)
+
+- `fmt`             - application for reformatting translation result
+
+==============================================================================
+CONFIGURATION                                  *translate-shell:configuration*
+==============================================================================
+
+                                                    *g:translate_shell_binary*
+Path to the `translate-shell` application.
+
+Default value: "trans"
+
+
+                                                  *g:translate_shell_language*
+Source and target languages as "source-code:target-code".  If source is
+missing then engine does auto detection. If target is missing then value is
+taken from locale.
+
+To see language codes, use:
+
+ $ trans -list-all
+
+To get more information about application, use:
+
+ $ man trans
+
+Default value: ":"
+
+
+                                                    *g:translate_shell_engine*
+Engine used to do the translation.
+
+Default value: "auto"
+
+
+                                          *g:translate_shell_mappings_enabled*
+If value is 1, mappings are defined, if it is 0 they are not. You may or may
+not like those mappings, that is why you have a choice. You can of course
+define your own mappings if you prefer. See also |translate-shell:mappings|.
+
+Default value: 1
+
+
+                                     *g:translate_shell_mapping_configuration*
+Dictionary storing configuration of behaviour when using translation by
+mappings.
+
+                   *g:translate_shell_mapping_configuration.paragraph_to_line*
+When this option is set to 0, then text to be translated is sent line by line,
+which can be a problem when sentence spans on couple lines. Translation looks
+like each line was a new sentence, which of course is not true.
+
+When it is set to 1, then plugin converts content to paragraphs. Each
+paragraph is converted to single (possibly long) line and eventually this line
+is sent to translator making result much better. Two consecutives newline
+characters ends paragraph.
+
+Default value: 1
+
+
+              *g:translate_shell_mapping_configuration.min_width_for_reformat*
+When paragraph_to_line is set to 1, a paragraph (possibly multiple lines, with
+width bounded to some value) is converted to a single line. Response from the
+engine is a single line, but our source text was not in one line and that is
+why plugin tries to reformat to original width (in fact it takes maximum width
+of source lines and reformat to this value). This parameter defines minimum
+value that activates reformating of translated text. This is primarly becuase
+of short text translations.
+
+Let's have min_width_for_reformat = 0 (reformat is active always) and
+translate "to use local setup" to Polish language, result is:
+
+ aby użyć
+ konfiguracji
+ lokalnej
+
+since width of translated text is greater than width of input text, that is
+why result was splitted into multiple lines. There is probably no best
+default value.
+
+Default value: 40
+
+
+                     *g:translate_shell_mapping_configuration.window_position*
+This value tells plugin where to open new window with translation. This value
+is put before |:new| command, which means it can be:
+
+- horizontal
+- verical
+- tab
+
+etc.
+
+Default value: "vertical"
+
+==============================================================================
+COMMANDS                                            *translate-shell:commands*
+==============================================================================
+
+In each plugin, commands are very useful, also here when you want to translate
+just a single or couple words without writing them to the buffer (to execute
+mapping on a word or selection).
+
+                                                                         *:TS*
+:TS [translate-shell-args]
+
+Execute `translate-shell` application and waits for result, that is eventually
+echoed.  Arguments that can be passed are those that you would normally use in
+application.
+
+Examples:
+
+:TS content
+:TS :pl "good plugin"
+:TS :pl+es -b "Hello"
+
+
+                                                                        *:TS!*
+:[<mods>]TS! [translate-shell-args]
+
+Execute `translate-shell` application and waits for result, that is written to
+a temporary file and shown in new window. |<mods>| can be empty, but it can
+also be |:vertical|, |:horizontal|, |:tab|, etc., which causes new window to
+be placed as required.
+
+Examples:
+
+:TS! content
+:vertical TS! :pl "good plugin"
+:tab TS! :pl+es "Hello"
+
+==============================================================================
+MAPPINGS                                            *translate-shell:mappings*
+==============================================================================
+
+This plugin offers couple predefined mappings that can be enabled if
+|g:translate_shell_mappings_enabled| == 1. If it is 0, then you can do it on
+your own in your vimrc. These mappings are defined as internal mappings.
+
+See |g:translate_shell_mapping_configuration| to get information about
+customization.
+
+
+- nnoremap mtw <Plug>(translate-shell-word-brief-echo)
+    Brief translation of a word under the cursor, echoes result
+
+- xnoremap mtw <Plug>(translate-shell-selection-brief-echo)
+    Brief translation of a selection, echoes result
+
+- xnoremap mtW <Plug>(translate-shell-selection-brief-window)
+    Brief translation of a selection, result in a new window 
+
+- nnoremap mtv <Plug>(translate-shell-word-verbose-echo)
+    Verbose translation of a word under the cursor, echoes result
+
+- xnoremap mtv <Plug>(translate-shell-selection-verbose-echo)
+    Verbose translation of a selection, echoes result
+
+- xnoremap mtV <Plug>(translate-shell-selection-verbose-window)
+    Verbose translation of a selection, result in a new window 
+
+
+==============================================================================
+CONTRIBUTE                                        *translate-shell:contribute*
+==============================================================================
+
+If you see a bug, or something that can be improved, or have an idea of a new
+stuff that can be useful, just let me know via GitHub or email.
+
+==============================================================================
+ vim:tw=78:et:ft=help:norl:
