@@ -209,6 +209,9 @@ customization.
 - nnoremap mtw <Plug>(translate-shell-word-brief-echo)
     Brief translation of a word under the cursor, echoes result
 
+- nnoremap mtW <Plug>(translate-shell-word-brief-window)
+    Brief translation of a word under the cursor, result in a new window
+
 - xnoremap mtw <Plug>(translate-shell-selection-brief-echo)
     Brief translation of a selection, echoes result
 
@@ -217,6 +220,9 @@ customization.
 
 - nnoremap mtv <Plug>(translate-shell-word-verbose-echo)
     Verbose translation of a word under the cursor, echoes result
+
+- nnoremap mtV <Plug>(translate-shell-word-verbose-window)
+    Verbose translation of a word under the cursor, result in a new window
 
 - xnoremap mtv <Plug>(translate-shell-selection-verbose-echo)
     Verbose translation of a selection, echoes result

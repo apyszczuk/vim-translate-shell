@@ -151,6 +151,20 @@ nnoremap <silent> <Plug>(translate-shell-word-brief-echo)
 \   )
 \   <CR>
 
+nnoremap <silent> <Plug>(translate-shell-word-brief-window)
+\   :call <SID>window
+\   (
+\       <SID>translate_mapping
+\       (
+\             g:translate_shell_mapping_configuration
+\           , "<C-R>=expand("<cword>")<CR>"
+\           , g:translate_shell_language
+\           , "--brief"
+\       )
+\       , g:translate_shell_mapping_configuration.window_position
+\   )
+\   <CR>
+
 xnoremap <silent> <Plug>(translate-shell-selection-brief-echo)
 \   :<C-U>
 \   call <SID>echo
@@ -194,6 +208,20 @@ nnoremap <silent> <Plug>(translate-shell-word-verbose-echo)
 \   )
 \   <CR>
 
+nnoremap <silent> <Plug>(translate-shell-word-verbose-window)
+\   :call <SID>window
+\   (
+\       <SID>translate_mapping
+\       (
+\             g:translate_shell_mapping_configuration
+\           , "<C-R>=expand("<cword>")<CR>"
+\           , g:translate_shell_language
+\           , "--verbose"
+\       )
+\       , g:translate_shell_mapping_configuration.window_position
+\   )
+\   <CR>
+
 xnoremap <silent> <Plug>(translate-shell-selection-verbose-echo)
 \   :<C-U>
 \   call <SID>echo
@@ -226,10 +254,12 @@ xnoremap <silent> <Plug>(translate-shell-selection-verbose-window)
 
 if g:translate_shell_mappings_enabled == 1
     nnoremap mtw        <Plug>(translate-shell-word-brief-echo)
+    nnoremap mtW        <Plug>(translate-shell-word-brief-window)
     xnoremap mtw        <Plug>(translate-shell-selection-brief-echo)
     xnoremap mtW        <Plug>(translate-shell-selection-brief-window)
 
     nnoremap mtv        <Plug>(translate-shell-word-verbose-echo)
+    nnoremap mtV        <Plug>(translate-shell-word-verbose-window)
     xnoremap mtv        <Plug>(translate-shell-selection-verbose-echo)
     xnoremap mtV        <Plug>(translate-shell-selection-verbose-window)
 endif
