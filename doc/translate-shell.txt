@@ -156,7 +156,7 @@ is put before |:new| command, which means it can be:
 
 etc.
 
-Default value: "vertical"
+Default value: "horizontal"
 
 ==============================================================================
 COMMANDS                                            *translate-shell:commands*
@@ -184,9 +184,9 @@ Examples:
 :[<mods>]TS! [translate-shell-args]
 
 Execute `translate-shell` application and waits for result, that is written to
-a temporary file and shown in new window. |<mods>| can be empty, but it can
-also be |:vertical|, |:horizontal|, |:tab|, etc., which causes new window to
-be placed as required.
+a temporary file and shown in new window. |<mods>| can be empty (horizontal),
+but it can also be |:vertical|, |:horizontal|, or |:tab|, which causes new
+window to be placed as required.
 
 Examples:
 

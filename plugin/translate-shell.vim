@@ -20,7 +20,7 @@ let g:translate_shell_mapping_configuration =
 \ {
 \     "paragraph_to_line"                   : 1
 \   , "min_width_for_reformat"              : 40
-\   , "window_position"                     : "vertical" 
+\   , "window_position"                     : "horizontal" 
 \ }
 
 
