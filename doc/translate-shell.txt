@@ -194,6 +194,18 @@ Examples:
 :vertical TS! :pl "good plugin"
 :tab TS! :pl+es "Hello"
 
+                                  *translate-shell:commands:escape-characters*
+Note:
+
+There are some characters that have special meaning in shell so they have to
+be escaped before passing command string to `translate-shell`. Such characters
+are: '$', '`' and '"'. First two are escaped by the plugin internally, but
+last one have to be manually escaped in a command by prepending '\'.
+
+Example:
+
+:TS :pl "$(touch), \"Vim\" and `` is ok."
+
 ==============================================================================
 MAPPINGS                                            *translate-shell:mappings*
 ==============================================================================
@@ -230,6 +242,11 @@ customization.
 - xnoremap mtV <Plug>(translate-shell-selection-verbose-window)
     Verbose translation of a selection, result in a new window 
 
+
+Note:
+
+Same as |translate-shell:commands:escape-characters| except '"' is also
+escaped internally.
 
 ==============================================================================
 CONTRIBUTE                                        *translate-shell:contribute*

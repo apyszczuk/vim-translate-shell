@@ -124,7 +124,7 @@ function! s:translate_mapping(configuration, content, ...)
         let content_string .= paragraph . "\n"
     endfor
 
-    let content_string = escape(content_string, '"')
+    let content_string = escape(content_string, '"`$')
     let content_string = trim(content_string)
 
     let command .= " " . '"' . content_string . '"'
@@ -266,12 +266,10 @@ endif
 
 
 " --------------------------------------------------------------- commands -----
-function! s:translate_command(args)
-    let command = g:translate_shell_binary . " --no-ansi"
-
-    for arg in a:args
-        let command .= " " . arg
-    endfor
+function! s:translate_command(arg)
+    let command = g:translate_shell_binary
+    \           . " --no-ansi"
+    \           . " " . escape(a:arg[0], '`$')
 
     return systemlist(command)
 endfunction
@@ -293,4 +291,4 @@ endfunction
 
 
 command! -nargs=+ -bang TS
-\ :call <SID>translate_command_dispatch("<bang>", "<mods>", <f-args>)
+\ :call <SID>translate_command_dispatch("<bang>", "<mods>", <q-args>)
