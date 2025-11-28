@@ -11,17 +11,25 @@ let g:loaded_translate_shell = 1
 
 
 " ---------------------------------------------------------- configuration -----
-let g:translate_shell_binary                = "trans"
-let g:translate_shell_language              = ":"
-let g:translate_shell_engine                = "auto"
+let g:translate_shell_binary =
+\ get(g:, "translate_shell_binary", "trans")
 
-let g:translate_shell_mappings_enabled      = 1
+let g:translate_shell_language =
+\ get(g:, "translate_shell_language", ":")
+
+let g:translate_shell_engine =
+\ get(g:, "translate_shell_engine", "auto")
+
+let g:translate_shell_mappings_enabled =
+\ get(g:, "translate_shell_mappings_enabled", 1)
+
 let g:translate_shell_mapping_configuration =
+\ get(g:, "translate_shell_mapping_configuration",
 \ {
 \     "paragraph_to_line"                   : 1
 \   , "min_width_for_reformat"              : 40
 \   , "window_position"                     : "horizontal" 
-\ }
+\ })
 
 
 " ---------------------------------------------------------------- writers -----
