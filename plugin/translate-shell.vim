@@ -292,3 +292,7 @@ endfunction
 
 command! -nargs=+ -bang TS
 \ :call <SID>translate_command_dispatch("<bang>", "<mods>", <q-args>)
+
+
+" --------------------------------------------------------------- modeline -----
+" vim:ts=4:et:tw=80:cc=80:
